@@ -11,7 +11,7 @@
 ## Installation
 
 ```
-yarn add count-up-es-react
+yarn add dropdown-table
 // or
-npm i count-up-es-react
+npm i dropdown-table
 ```
