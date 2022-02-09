@@ -1,4 +1,17 @@
-# DropdownTable
-下拉表格组件（支持搜索与分页）
+<div align="center">
+  <h1>dropdown-table</h1>
+  <p>
+    <br />
+    <strong>下拉列表选择框（带分页、搜索）</strong>
+  </p>
+</div>
 
-依赖antd，下载后拖入项目即可使用。（只留一个index.tsx即可）
+<hr />
+
+## Installation
+
+```
+yarn add count-up-es-react
+// or
+npm i count-up-es-react
+```

@@ -1,23 +1,35 @@
-import "./demo.less";
-import DropdownTable from "./DropdownTable";
-import { useAntdTable } from "ahooks";
-import { Button, Form, message } from "antd";
-import { useState } from "react";
+---
+nav:
+  title: Components
+  path: /components
+---
+
+## Foo
+
+Demo:
+
+```tsx
+import React from 'react';
+import { DropdownTable } from 'DropdownTable';
+import { useAntdTable } from 'ahooks';
+import { Button, Form, message } from 'antd';
+import { useState } from 'react';
+import 'antd/dist/antd.css';
 
 const columns = [
   {
-    title: "用户名",
-    dataIndex: "id",
-    key: "id",
+    title: '用户名',
+    dataIndex: 'id',
+    key: 'id',
   },
   {
-    title: "姓名",
-    dataIndex: "name",
-    key: "name",
+    title: '姓名',
+    dataIndex: 'name',
+    key: 'name',
   },
 ];
 
-const names = ["张", "李", "陈", "荀", "诸葛", "牛", "刘"];
+const names = ['张', '李', '陈', '荀', '诸葛', '牛', '刘'];
 const dataSource: { name: string; id: string }[] = [];
 for (let i = 0; i < 20; i++) {
   const index = Math.floor(Math.random() * names.length);
@@ -28,17 +40,13 @@ for (let i = 0; i < 20; i++) {
 }
 
 const getData = (current: number, pageSize: number, searchKey?: string) => {
-  console.log(current, pageSize);
-
   return new Promise((resolve) => {
     setTimeout(() => {
       const start = (current - 1) * pageSize;
       const array: { name: string; id: string }[] = [];
 
       if (searchKey) {
-        array.push(
-          ...[...dataSource].filter((rs) => rs.name.indexOf(searchKey) !== -1)
-        );
+        array.push(...[...dataSource].filter((rs) => rs.name.indexOf(searchKey) !== -1));
         if (array.length > 5) {
           resolve({
             total: array.length,
@@ -61,10 +69,10 @@ const getData = (current: number, pageSize: number, searchKey?: string) => {
   });
 };
 
-const CustomComponentPage = () => {
+export default () => {
   const [form] = Form.useForm();
 
-  const [searchKey, setSearchKey] = useState("");
+  const [searchKey, setSearchKey] = useState('');
 
   const { tableProps } = useAntdTable<
     {
@@ -76,7 +84,7 @@ const CustomComponentPage = () => {
   >(
     (rs) => {
       const { current, pageSize } = rs;
-      console.log("res", rs);
+      console.log('res', rs);
 
       // console.log("current:", current, pageSize);
       return getData(current, pageSize, searchKey);
@@ -87,9 +95,8 @@ const CustomComponentPage = () => {
       formatResult: (res) => {
         return res;
       },
-    }
+    },
   );
-  console.log(tableProps.pagination);
 
   return (
     <div className="custom-component-page">
@@ -103,7 +110,7 @@ const CustomComponentPage = () => {
           optionValueProp="id"
           optionLabelProp="name"
           onChange={(selectedKeys) => {
-            console.log("selectedKeys:", selectedKeys);
+            console.log('selectedKeys:', selectedKeys);
           }}
           tableProps={{ ...(tableProps as any) }}
           dropdownStyle={{ minWidth: 360 }} // 设置下拉表最小宽度，此处设置width无效必须设置minWidth
@@ -119,7 +126,7 @@ const CustomComponentPage = () => {
           optionValueProp="id"
           optionLabelProp="name"
           onChange={(selectedKeys) => {
-            console.log("selectedKeys:", selectedKeys);
+            console.log('selectedKeys:', selectedKeys);
           }}
           tableProps={{ ...(tableProps as any) }}
           dropdownStyle={{ minWidth: 360 }} // 设置下拉表最小宽度，此处设置width无效必须设置minWidth
@@ -128,11 +135,11 @@ const CustomComponentPage = () => {
       <div className="custom-component-page__demo">
         <Form
           onFinish={(values) => {
-            console.log("values:", values);
+            console.log('values:', values);
             message.info(`获取到表单数据${JSON.stringify(values)}`);
           }}
           form={form}
-          initialValues={{ table: ["3", "4"] }}
+          initialValues={{ table: ['3', '4'] }}
         >
           <Form.Item label="form设置初始值" name="table">
             <DropdownTable
@@ -147,8 +154,9 @@ const CustomComponentPage = () => {
               searchPlaceholder="请输入用户名或者姓名搜索"
               optionValueProp="id"
               optionLabelProp="name"
+              disableKeys={['1', '8']}
               onChange={(selectedKeys) => {
-                console.log("selectedKeys:", selectedKeys);
+                console.log('selectedKeys:', selectedKeys);
               }}
               onSearch={(keyword) => {
                 setSearchKey(keyword);
@@ -169,4 +177,6 @@ const CustomComponentPage = () => {
     </div>
   );
 };
-export default CustomComponentPage;
+```
+
+More skills for writing demo: https://d.umijs.org/guide/basic#write-component-demo
