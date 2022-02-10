@@ -150,6 +150,7 @@ export default () => {
                 })
                 .splice(2, 2)}
               mode="checkbox"
+              maxTagCount="responsive"
               placeholder="点击选择用户"
               searchPlaceholder="请输入用户名或者姓名搜索"
               optionValueProp="id"

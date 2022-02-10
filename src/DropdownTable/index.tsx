@@ -1,13 +1,12 @@
-import { Select, Table, Input, message, TablePaginationConfig } from 'antd';
-import { useRef, useState, useEffect } from 'react';
+import { Input, message, Select, Table } from 'antd';
+import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table/interface';
 import * as React from 'react';
-import { ColumnsType } from 'antd/lib/table';
+import { useEffect, useRef, useState } from 'react';
 import './index.less';
-// import type { PaginationConfig } from "antd";
 
 const { Search } = Input;
 
-export type DropdownTableProps<D> = {
+export type DropdownTableProps<T> = {
   /** table列配置 */
   columns?: ColumnsType<any>;
   /** 单选 多选 */
@@ -17,8 +16,8 @@ export type DropdownTableProps<D> = {
   /** 选择框的value */
   optionValueProp?: string | 'value';
   /** 回填到选择框的 Option 的属性值，默认是 Option 的子元素。
-  比如在子元素需要高亮效果时，
-  此值可以设为 value */
+ 比如在子元素需要高亮效果时，
+ 此值可以设为 value */
   optionLabelProp?: string | 'label';
   /** 搜索框默认文本 */
   searchPlaceholder?: string;
@@ -29,12 +28,15 @@ export type DropdownTableProps<D> = {
   /** 下拉框样式 */
   dropdownStyle?: React.CSSProperties;
   /** 设置默认选项，在需要回填时使用 */
-  defaultOptions?: { value: string; label: string }[];
+  defaultOptions?: {
+    value: string;
+    label: string;
+  }[];
   /** 设置值 */
   value?: string[];
   /** 下拉表的table的参数props */
   tableProps?: {
-    dataSource: D[];
+    dataSource: T[];
     loading: boolean;
     onChange?: (pagination?: TablePaginationConfig, filters?: any, sorter?: any) => void;
     pagination?: TablePaginationConfig | false;
@@ -46,9 +48,19 @@ export type DropdownTableProps<D> = {
   disabled?: boolean;
   /** cell禁用的keys */
   disableKeys?: string[];
+  /** 是否隐藏搜索栏 */
+  isHiddenSearchBar?: boolean;
+  /** 选择回调函数 */
+  onSelect?: (value: string[], data: T[], record: T | T[]) => void;
+  /** 最多显示多少个 tag，响应式模式会对性能产生损耗 */
+  maxTagCount?: number | 'responsive';
+  /** 支持清除 */
+  allowClear?: boolean;
+  /** 是否显示下拉小箭头 */
+  showArrow?: boolean;
 };
 
-const DropdownTable = <T extends Record<string, any>, D extends Record<string, any>>({
+const DropdownTable = <T extends Record<string, any>>({
   columns,
   mode = 'radio',
   placeholder = '',
@@ -57,19 +69,26 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
   searchPlaceholder = '',
   limit,
   onChange,
+  tableProps,
   dropdownStyle,
   defaultOptions,
   value,
-  tableProps,
-  onSearch,
-  disabled,
+  isHiddenSearchBar,
+  onSelect,
+  maxTagCount = 1,
+  allowClear = true,
+  showArrow = true,
   disableKeys,
-}: DropdownTableProps<D>) => {
+  disabled,
+}: // disableKeys,
+// disableMessage = '该选项无法选择！',
+DropdownTableProps<T>) => {
   const ref = useRef<any>();
   const [thisSelectedRowKeys, setThisSelectedRowKeys] = useState<string[]>([]);
   const [selectedRowObjects, setSelectedRowObjects] = useState<{ value: string; label: string }[]>(
     [],
   );
+  const [selectedRecords, setSelectedRecords] = useState<T[]>([]);
   const [keyword, setKeyword] = useState<string>('');
   const [searchTag, setSearchTag] = useState<number>(1);
 
@@ -107,9 +126,16 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
     });
   }, [defaultOptions]);
 
-  const listenDataToCallBack = (keys: string[], objects: { value: string; label: string }[]) => {
+  const listenDataToCallBack = (
+    keys: string[],
+    objects: { value: string; label: string }[],
+    records: T[],
+    record: T | T[],
+  ) => {
+    onSelect?.(keys, records, record);
     setThisSelectedRowKeys(keys);
     setSelectedRowObjects(objects);
+    setSelectedRecords(records);
     onChange?.(keys);
   };
 
@@ -141,9 +167,9 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
     return newArray;
   };
 
-  const clickRow = (record: D) => {
+  const clickRow = (record: T) => {
     if (mode === 'radio') {
-      ref.current.blur();
+      ref?.current?.blur();
     }
 
     const key = record[optionValueProp];
@@ -154,7 +180,14 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
       message.info(`最多只能选择${limit}个`);
       return;
     }
-    listenDataToCallBack(newArray, newObjectArray);
+    let records = [...selectedRecords];
+    const selected = thisSelectedRowKeys.indexOf(key);
+    if (selected) {
+      records.push(record);
+    } else {
+      records = [...records].filter((rc) => rc[optionValueProp] !== record[optionValueProp]);
+    }
+    listenDataToCallBack(newArray, newObjectArray, records, record);
   };
 
   const onSelectAllTable = (
@@ -215,9 +248,16 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
         message.info(`最多只能选择${limit}个`);
         return;
       }
-      listenDataToCallBack(newArray, newObjectArray);
+      let records = [...selectedRecords];
+      if (selected) {
+        records.push(record);
+      } else {
+        records = [...records].filter((rc) => rc[optionValueProp] !== record[optionValueProp]);
+      }
+
+      listenDataToCallBack(newArray, newObjectArray, records, record);
     },
-    onSelectAll: (selected: boolean, selectedRows: string[], changeRows: any[]) => {
+    onSelectAll: (selected: boolean, selectedRows: string[], changeRows: T[]) => {
       const newKeys = onSelectAllTable(
         changeRows,
         selected,
@@ -249,7 +289,7 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
           }
         }
       }
-      listenDataToCallBack(newKeys, newArray);
+      listenDataToCallBack(newKeys, newArray, changeRows, changeRows);
     },
   };
 
@@ -270,6 +310,7 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
         selectedRowKeys: thisSelectedRowKeys,
       };
     }
+
     return {
       ...rowSelection,
       ...(disableKeys
@@ -283,32 +324,38 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
     };
   };
 
-  const handleChange = (v: string[]) => {
-    setThisSelectedRowKeys(v);
-    onChange?.(v);
+  const handleChange = (val: string[]) => {
+    setThisSelectedRowKeys(val ? val : []);
+    onChange?.(val ? val : []);
   };
 
   return (
-    <>
-      <Select
-        ref={ref}
-        placeholder={placeholder}
-        showSearch={false}
-        allowClear
-        showArrow
-        onChange={handleChange}
-        style={{ width: '100%' }}
-        options={selectedRowObjects}
-        mode={mode === 'checkbox' ? 'multiple' : undefined}
-        onClear={() => {
-          listenDataToCallBack([], []);
-        }}
-        disabled={disabled}
-        value={thisSelectedRowKeys}
-        dropdownStyle={dropdownStyle}
-        dropdownRender={() => {
-          return (
-            <div style={{ ...dropdownStyle, padding: 12 }}>
+    <Select
+      ref={ref}
+      placeholder={placeholder}
+      showSearch={false}
+      allowClear={allowClear}
+      showArrow={showArrow}
+      onChange={(val) => {
+        handleChange(val);
+      }}
+      disabled={disabled}
+      maxTagCount={maxTagCount}
+      style={{ width: '100%' }}
+      options={selectedRowObjects}
+      mode={mode === 'checkbox' ? 'multiple' : undefined}
+      onClear={() => {
+        listenDataToCallBack([], [], [], []);
+      }}
+      value={thisSelectedRowKeys}
+      dropdownStyle={dropdownStyle}
+      dropdownRender={() => {
+        return (
+          <div
+            style={{ ...dropdownStyle, padding: 12 }}
+            className={mode === 'radio' ? 'dropdown-table' : ''}
+          >
+            {!isHiddenSearchBar && (
               <Search
                 value={keyword}
                 placeholder={searchPlaceholder}
@@ -319,44 +366,43 @@ const DropdownTable = <T extends Record<string, any>, D extends Record<string, a
                 onSearch={() => {
                   setSearchTag(searchTag + 1);
                 }}
-                onChange={(e: any) => {
+                onChange={(e) => {
                   if (e.target.value === '') {
                     setKeyword('');
-                    onSearch?.('');
                     setSearchTag(searchTag + 1);
                     return;
                   }
                   setKeyword(e.target.value);
-                  onSearch?.(e.target.value);
                 }}
                 enterButton
               />
-              <Table
-                {...tableProps}
-                onRow={(record) => ({
-                  onClick: () => {
-                    if (disableKeys && disableKeys.indexOf(record[optionValueProp]) !== -1) {
-                      return;
-                    }
-                    clickRow(record);
-                  },
-                })}
-                size="small"
-                rowSelection={{ ...getRowSelection() }}
-                rowClassName={(record: D) => {
-                  if (disableKeys && disableKeys?.indexOf(record[optionValueProp]) !== -1) {
-                    return 'dropdown-table__disable';
+            )}
+            <Table
+              {...tableProps}
+              onRow={(record) => ({
+                onClick: () => {
+                  if (disableKeys && disableKeys.indexOf(record[optionValueProp]) !== -1) {
+                    return;
                   }
-                  return '';
-                }}
-                columns={columns}
-                rowKey={optionValueProp}
-              />
-            </div>
-          );
-        }}
-      />
-    </>
+                  clickRow(record);
+                },
+              })}
+              size="small"
+              rowSelection={{ ...getRowSelection() }}
+              rowClassName={(record: T) => {
+                if (disableKeys && disableKeys?.indexOf(record[optionValueProp]) !== -1) {
+                  return 'dropdown-table__disable';
+                }
+                return '';
+              }}
+              columns={columns}
+              rowKey={optionValueProp}
+              scroll={{ y: '50vh' }}
+            />
+          </div>
+        );
+      }}
+    />
   );
 };
 

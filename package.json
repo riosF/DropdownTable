@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "dropdown-table",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "es/index.js",
   "description": "下拉列表选择框（带分页、搜索）",
   "repository": "riosF/DropdownTable",
