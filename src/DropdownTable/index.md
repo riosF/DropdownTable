@@ -6,6 +6,8 @@ nav:
 
 ## DropdownTable
 
+<API></API>
+
 Demo:
 
 ```tsx
