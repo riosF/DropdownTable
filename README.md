@@ -2,7 +2,7 @@
   <h1>dropdown-table</h1>
   <p>
     <br />
-    <strong>下拉列表选择框（带分页、搜索）</strong>
+    <strong>下拉列表选择框（带分页、搜索）v0.0.5版本修复值设置可能出现的bug</strong>
   </p>
 </div>
 

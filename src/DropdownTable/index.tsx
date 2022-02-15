@@ -96,23 +96,23 @@ DropdownTableProps<T>) => {
   // 监听value变化
   useEffect(() => {
     // value是否存在
+    let newValue: React.SetStateAction<string[]> = [];
     if (value) {
       //是数组直接设置
       if (Array.isArray(value)) {
-        setThisSelectedRowKeys(value);
+        newValue = value;
       } else {
         //非数组转成数组
-        setThisSelectedRowKeys([`${value}`]);
+        newValue = [`${value}`];
       }
-    } else {
-      setThisSelectedRowKeys([]);
     }
 
+    setThisSelectedRowKeys(newValue);
     if ((!value || value.length === 0) && isFirstLoad?.current === true) {
       return;
     }
     if (isFirstLoad?.current === true) {
-      onChange?.(value || []);
+      onChange?.(newValue);
       isFirstLoad.current = false;
     }
   }, [onChange, value]);
