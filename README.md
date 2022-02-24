@@ -2,7 +2,7 @@
   <h1>dropdown-table</h1>
   <p>
     <br />
-    <strong>下拉列表选择框（带分页、搜索）v0.0.5版本修复值设置可能出现的bug</strong>
+    <strong>下拉列表选择框（带分页、搜索）v0.0.7修复样式未引入所导致的问题</strong>
   </p>
 </div>
 
@@ -17,8 +17,6 @@ npm i dropdown-table
 ```
 
 ![demo.gif](https://upload-images.jianshu.io/upload_images/4981782-6e3edb7f015a3530.gif?imageMogr2/auto-orient/strip)
-
-## DropdownTable
 
 <div class="markdown"><h2 id="dropdowntable"><a aria-hidden="true" tabindex="-1" href="/components/dropdown-table#dropdowntable"><span class="icon icon-link"></span></a>DropdownTable</h2><h2 id="api"><a aria-hidden="true" tabindex="-1" href="/components/dropdown-table#api"><span class="icon icon-link"></span></a>API</h2><table style="margin-top: 24px;"><thead><tr><th>Name</th><th>Description</th><th>Type</th><th>Default</th></tr></thead><tbody><tr><td>columns</td><td>table列配置</td><td><code>ColumnsType&lt;any&gt;</code></td><td><code>--</code></td></tr><tr><td>mode</td><td>单选 多选</td><td><code>"radio" | "checkbox"</code></td><td><code>radio</code></td></tr><tr><td>placeholder</td><td>选择框默认文本</td><td><code>string</code></td><td><code>--</code></td></tr><tr><td>optionValueProp</td><td>选择框的value</td><td><code>string</code></td><td><code>value</code></td></tr><tr><td>optionLabelProp</td><td>回填到选择框的 Option 的属性值，默认是 Option 的子元素。
 比如在子元素需要高亮效果时，

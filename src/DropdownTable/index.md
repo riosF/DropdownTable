@@ -16,7 +16,6 @@ import { DropdownTable } from 'DropdownTable';
 import { useAntdTable } from 'ahooks';
 import { Button, Form, message } from 'antd';
 import { useState } from 'react';
-import 'antd/dist/antd.css';
 
 const columns = [
   {
