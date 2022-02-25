@@ -1,4 +1,5 @@
 import { Input, message, Select, Table } from 'antd';
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table/interface';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -58,6 +59,10 @@ export type DropdownTableProps<T> = {
   allowClear?: boolean;
   /** 是否显示下拉小箭头 */
   showArrow?: boolean;
+  /** 选择框大小 */
+  size?: SizeType;
+  /** 是否展开下拉框 */
+  open?: boolean;
 };
 
 const DropdownTable = <T extends Record<string, any>>({
@@ -80,6 +85,8 @@ const DropdownTable = <T extends Record<string, any>>({
   showArrow = true,
   disableKeys,
   disabled,
+  size,
+  open,
 }: // disableKeys,
 // disableMessage = '该选项无法选择！',
 DropdownTableProps<T>) => {
@@ -115,7 +122,7 @@ DropdownTableProps<T>) => {
       onChange?.(newValue);
       isFirstLoad.current = false;
     }
-  }, [onChange, value]);
+  }, [value]);
 
   useEffect(() => {
     setSelectedRowObjects((old) => {
@@ -336,6 +343,8 @@ DropdownTableProps<T>) => {
       showSearch={false}
       allowClear={allowClear}
       showArrow={showArrow}
+      size={size}
+      open={open}
       onChange={(val) => {
         handleChange(val);
       }}

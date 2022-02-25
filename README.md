@@ -2,7 +2,8 @@
   <h1>dropdown-table</h1>
   <p>
     <br />
-    <strong>下拉列表选择框（带分页、搜索）v0.0.7修复样式未引入所导致的问题</strong>
+    <strong>下拉列表选择框（带分页、搜索）v0.0.8新增Size参数 为保持与Select尽可能一致</strong>
+    <div>修复无antd项目也可以使用该组件，新增size,open参数</div>
   </p>
 </div>
 

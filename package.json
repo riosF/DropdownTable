@@ -1,9 +1,9 @@
 {
   "private": false,
   "name": "dropdown-table",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "main": "es/index.js",
-  "description": "下拉列表选择框（带分页、搜索） 最新版本修复antd样式未引入",
+  "description": "下拉列表选择框（带分页、搜索） 修复BUG",
   "repository": "riosF/DropdownTable",
   "license": "MIT",
   "keywords": [

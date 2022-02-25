@@ -106,6 +106,7 @@ export default () => {
         <DropdownTable
           columns={columns}
           mode="radio"
+          size=""
           placeholder="点击选择用户"
           searchPlaceholder="请输入用户名或者姓名搜索"
           optionValueProp="id"
@@ -120,6 +121,7 @@ export default () => {
       <div className="custom-component-page__demo">
         普通多选用法：
         <DropdownTable
+          open={true}
           columns={columns}
           mode="checkbox"
           placeholder="点击选择用户"
