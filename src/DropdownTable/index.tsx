@@ -4,6 +4,7 @@ import type { ColumnsType, TablePaginationConfig } from 'antd/lib/table/interfac
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import './index.less';
+import 'antd/dist/antd.variable.min.css';
 
 const { Search } = Input;
 
